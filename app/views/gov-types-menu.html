@@ -1,8 +1,8 @@
 <div class="page-sidebar">
   <ul class="page-filters links" role="presentation" aria-hidden="true">
     <li class="page-filters-title">Filtros</li>
-    <li><a href="">Federal</a></li>
-    <li><a href="">Estatal</a></li>
-    <li><a href="">Municipal</a></li>
+    <li ng-repeat='type in govTypes'>
+      <a href="" ng-class="{active: type == selected}" ng-click="filterByType(type)">{{type}}</a>
+    </li>
   </ul>
 </div>

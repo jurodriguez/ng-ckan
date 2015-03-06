@@ -5,40 +5,20 @@
  * @name ngCkanApp.directive:search
  * @description
  * # search
- * A generic search directive.
- * Inspired by https://egghead.io/lessons/search-directive-with-rails
  */
 angular.module('ngCkanApp')
-  .directive('search', function ($timeout) {
+  .directive('search', function () {
     return {
       restrict: 'A',
-      scope: {
-        search: '@',
-        controller: '=',
-        update: '='
-      },
+
       link: function postLink(scope, element, attrs) {
-        var searchTimeout;
+        scope.searchDatasets('');
 
-        element.on('keyup', function() {
-          if (searchTimeout !== undefined) $timeout.cancel(searchTimeout);
-
-          searchTimeout = $timeout(function() {
-            var val = element.val();
-            var query = '';
-
-            scope.controller.query(query).$promise.then(function(response) {
-              _.each(response, function(item) {
-                var responseAlreadyCached = _.find(scope.update, { id: item.id });
-                if (!responseAlreadyCached) scope.update.push(item);
-              });
-
-              _.remove(scope.update, function(item) {
-                return !_.find(response, { id: item.id });
-              });
-            });
-          }, 200);
-
+        element.on('keyup', function(event) {
+          var code = event.keyCode || event.which;
+          if (code === 13) {
+            scope.searchDatasets(element.val());
+          }
         });
       }
     };

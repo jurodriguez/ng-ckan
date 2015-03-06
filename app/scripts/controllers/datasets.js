@@ -11,18 +11,25 @@ angular.module('ngCkanApp')
   .controller('DatasetsCtrl', function ($scope, ckanService) {
 
     $scope.start = 0;
+    $scope.search_query = '';
+    $scope.filters = '';
 
-    ckanService.listDatasets($scope.start)
-      .then(function(result) {
-        $scope.datasets = result.datasets;
-        $scope.resultsCount = result.resultsCount;
-      });
-
-    $scope.query = function(query) {
-      return _.filter(this.datasets, function(dataset) {
-        return  !_.isNull(dataset.title.match(query)) ||
-                !_.isNull(dataset.notes.match(query));
-      });
+    $scope.searchDatasets = function(search_query) {
+      $scope.search_query = search_query;
+      listDatasets();
     };
+
+    $scope.$on('filterDatasets', function(event, govType) {
+      $scope.filters = '+vocab_gov_types:'+govType;
+      listDatasets();
+    });
+
+    function listDatasets(){
+      ckanService.listDatasets($scope.search_query, $scope.filters, $scope.start)
+        .then(function(result) {
+          $scope.datasets = result.datasets;
+          $scope.resultsCount = result.resultsCount;
+        });
+    }
 
   });
