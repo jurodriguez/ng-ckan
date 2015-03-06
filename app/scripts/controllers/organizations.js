@@ -10,15 +10,11 @@
 angular.module('ngCkanApp')
   .controller('OrganizationsCtrl', function ($scope, ckanService) {
 
-    ckanService.listOrganizations()
-      .then(function(result) {
-        $scope.organizations = result;
-      });
-
-    $scope.query = function(query) {
-      return _.filter(this.organizations, function(organization) {
-        return  !_.isNull(organization.display_name.match(query));
-      });
+    $scope.searchOrganizations = function(search_query) {
+      ckanService.listOrganizations()
+        .then(function(result) {
+          $scope.organizations = result;
+        });
     };
 
   });
