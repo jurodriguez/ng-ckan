@@ -6,17 +6,28 @@ describe('Controller: OrganizationCtrl', function () {
   beforeEach(module('ngCkanApp'));
 
   var OrganizationCtrl,
+    ckanService,
     scope;
 
   // Initialize the controller and a mock scope
-  beforeEach(inject(function ($controller, $rootScope) {
+  beforeEach(inject(function ($q, $controller, $rootScope) {
     scope = $rootScope.$new();
+    ckanService = {
+      showOrganization: function(id) {
+        var deferred = $q.defer();
+        deferred.resolve({});
+        return deferred.promise;
+      }
+    };
     OrganizationCtrl = $controller('OrganizationCtrl', {
+      ckanService: ckanService,
       $scope: scope
     });
+    spyOn(ckanService, 'showOrganization').and.callThrough();
   }));
 
-  it('should attach a list of organization\'s datasets to the scope', function () {
-    expect(scope.organization.packages.length).toBe(1);
+  it('should attach an organization to the scope', function () {
+    scope.$root.$digest();
+    expect(scope.organization).toBeDefined();
   });
 });

@@ -6,17 +6,28 @@ describe('Controller: GroupCtrl', function () {
   beforeEach(module('ngCkanApp'));
 
   var GroupCtrl,
+    ckanService,
     scope;
 
   // Initialize the controller and a mock scope
-  beforeEach(inject(function ($controller, $rootScope) {
+  beforeEach(inject(function ($q, $controller, $rootScope) {
     scope = $rootScope.$new();
+    ckanService = {
+      showGroup: function(id) {
+        var deferred = $q.defer();
+        deferred.resolve({});
+        return deferred.promise;
+      }
+    };
     GroupCtrl = $controller('GroupCtrl', {
+      ckanService: ckanService,
       $scope: scope
     });
+    spyOn(ckanService, 'showGroup').and.callThrough();
   }));
 
-  it('should attach a list of group\'s datasets to the scope', function () {
-    expect(scope.group.packages.length).toBe(1);
+  it('should attach a group to the scope', function () {
+    scope.$root.$digest();
+    expect(scope.group).toBeDefined();
   });
 });
