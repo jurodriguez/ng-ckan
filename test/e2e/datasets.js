@@ -3,7 +3,11 @@
 /* https://github.com/angular/protractor/blob/master/docs/toc.md */
 
 describe('datasets', function() {
+
+  var mockModule = require('../mock/backend-mock');
   var datasetList;
+
+  browser.addMockModule('httpBackendMock', mockModule.httpBackendMock);
 
   beforeEach(function() {
     browser.get('/#/datasets');
@@ -17,25 +21,23 @@ describe('datasets', function() {
   });
 
   it('should list datasets', function() {
-    expect(datasetList.count()).toEqual(3);
-    var dateInLongFormat = /\| \w+ \d+, \d+/;
-    expect(datasetList.get(1).getText()).toMatch(dateInLongFormat);
+    expect(datasetList.count()).toBeGreaterThan(0);
   });
 
   it('root should redirect to datasets', function() {
     browser.get('/');
-    expect(browser.getCurrentUrl()).toEqual(browser.baseUrl + '#/datasets');
+    expect(browser.getCurrentUrl()).toEqual(browser.baseUrl + '#/conjuntos');
   });
 
-  it('should filter datasets as a user types into the search box', function() {
-    var search = element(by.model('search'));
-    // By title
-    search.sendKeys('comercio');
-    expect(datasetList.count()).toEqual(1);
-    search.clear();
-    // By notes
-    search.sendKeys('de productos');
-    expect(datasetList.count()).toEqual(1);
+  it('should search datasets when the user press enter in the search box', function() {
+    var search = element(by.css('.search>input'));
+    search.sendKeys('licencias', protractor.Key.ENTER);
+    expect(datasetList.count()).toBeGreaterThan(0);
+  });
+
+  it('should filter datasets when the user selects a goverment type', function() {
+    element.all(by.repeater('type in govTypes')).get(0).click();
+    expect(datasetList.count()).toBeGreaterThan(0);
   });
 
   it('should link to dataset\'s detailed information', function() {
